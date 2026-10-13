@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FTracker</title>
+  <meta name="description" content="Personal monthly money tracker: plan a budget, log transactions, compare budget vs actual.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231f7a5a'/%3E%3Ctext x='16' y='23' font-family='Arial' font-size='19' font-weight='bold' fill='white' text-anchor='middle'%3E%24%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">$</span>
+      <span>FTracker</span>
+    </div>
+    <nav class="month-nav" aria-label="Month">
+      <button class="icon-btn" id="prevMonth" aria-label="Previous month">&#8249;</button>
+      <input type="month" id="monthPicker" aria-label="Selected month">
+      <button class="icon-btn" id="nextMonth" aria-label="Next month">&#8250;</button>
+    </nav>
+    <div class="menu">
+      <button class="btn ghost" id="menuBtn" aria-haspopup="true" aria-expanded="false">Menu &#9662;</button>
+      <div class="menu-list" id="menuList" hidden>
+        <button data-action="import">Import budget CSV&hellip;</button>
+        <button data-action="export-summary">Export month summary (CSV)</button>
+        <button data-action="export-transactions">Export month transactions (CSV)</button>
+        <hr>
+        <button data-action="backup">Download backup (JSON)</button>
+        <button data-action="restore">Restore backup&hellip;</button>
+        <hr>
+        <button data-action="settings">Settings&hellip;</button>
+        <button data-action="delete-month" class="danger">Delete this month</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="app">
+    <section class="summary" id="summary" aria-label="Budget summary"></section>
+
+    <section id="emptyState" class="card empty" hidden>
+      <h2>No budget for <span id="emptyMonthLabel"></span> yet</h2>
+      <p>Start this month from one of these:</p>
+      <div class="empty-actions">
+        <button class="btn primary" id="copyPrevBtn">Copy plan from previous month</button>
+        <button class="btn" id="defaultTemplateBtn">Start from default template</button>
+        <button class="btn" id="emptyImportBtn">Import budget CSV&hellip;</button>
+      </div>
+      <p class="hint" id="copyPrevHint"></p>
+    </section>
+
+    <div class="layout" id="monthContent" hidden>
+      <div class="col-main">
+        <section class="card" aria-labelledby="addTxTitle">
+          <h2 id="addTxTitle">Add transaction</h2>
+          <form id="txForm" class="tx-form">
+            <label>Date<input type="date" name="date" required></label>
+            <label class="grow">Category<select name="itemId" required></select></label>
+            <label>Amount<input type="number" name="amount" step="0.01" min="0.01" inputmode="decimal" required placeholder="0.00"></label>
+            <label class="grow">Note<input type="text" name="note" placeholder="Optional" maxlength="120"></label>
+            <button class="btn primary" type="submit">Add</button>
+          </form>
+        </section>
+
+        <div id="sections"></div>
+        <button class="btn ghost add-category" id="addCategoryBtn">+ Add category</button>
+      </div>
+
+      <aside class="col-side">
+        <section class="card" aria-labelledby="breakdownTitle">
+          <h2 id="breakdownTitle">Spending by category</h2>
+          <div id="breakdown"></div>
+        </section>
+        <section class="card" aria-labelledby="txTitle">
+          <div class="card-head">
+            <h2 id="txTitle">Transactions</h2>
+            <select id="txFilter" aria-label="Filter transactions"></select>
+          </div>
+          <ul class="tx-list" id="txList"></ul>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <dialog id="importDialog">
+    <form method="dialog" id="importForm">
+      <h2>Import budget CSV</h2>
+      <p class="hint">Works with the Vertex42 &ldquo;Personal Monthly Budget&rdquo; layout (sections with Budget / Actual / Difference columns).</p>
+      <label>CSV file<input type="file" name="file" accept=".csv,text/csv" required></label>
+      <label>Into month<input type="month" name="month" required></label>
+      <label class="check"><input type="checkbox" name="withActuals" checked> Import &ldquo;Actual&rdquo; amounts as transactions</label>
+      <p class="error" id="importError" hidden></p>
+      <div class="dialog-actions">
+        <button class="btn" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn primary" value="ok" id="importOk">Import</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="settingsDialog">
+    <form method="dialog" id="settingsForm">
+      <h2>Settings</h2>
+      <label>Currency symbol<input type="text" name="currency" maxlength="5" placeholder="e.g. $, &euro;, NAf"></label>
+      <div class="dialog-actions">
+        <button class="btn" value="cancel" formnovalidate>Cancel</button>
+        <button class="btn primary" value="ok">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <input type="file" id="restoreInput" accept=".json,application/json" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="js/budget-csv.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
