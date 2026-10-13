@@ -29,11 +29,21 @@ or switching devices.
 
 ## Running
 
-Open `index.html` in a browser, or serve the folder:
+Simplest: double-click `index.html` to open it in your browser. No install or server needed.
+
+Or serve the folder with Node and open http://localhost:8080:
 
 ```sh
-npm start        # python3 -m http.server 8080, then open http://localhost:8080
+npm start
 ```
+
+On Windows PowerShell, if you see "running scripts is disabled on this system",
+run `npm.cmd start` (or `node server.js`) instead.
+
+Your data is saved per browser *and* per address, so data entered via the
+double-clicked file is not visible at `http://localhost:8080` and vice versa.
+Pick one way of opening the app and stick with it, or move data across with
+*Menu → Download backup* / *Restore backup*.
 
 It can also be published as-is with GitHub Pages.
 

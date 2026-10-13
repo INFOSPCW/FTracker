@@ -4,7 +4,7 @@
   "description": "Personal monthly money tracker based on the Vertex42 Personal Monthly Budget template",
   "private": true,
   "scripts": {
-    "start": "python3 -m http.server 8080",
+    "start": "node server.js",
     "test": "node --test tests/*.test.js"
   }
 }
